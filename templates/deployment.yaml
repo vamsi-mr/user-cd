@@ -1,0 +1,40 @@
+### Deployment
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: user
+  namespace: roboshop
+  labels:
+    component: user
+    project: roboshop
+    tier: app
+spec:
+  selector:
+    matchLabels:
+      component: user
+      project: roboshop
+      tier: app
+  replicas: 2
+  ### This is Pod definiton
+  template:
+    metadata:
+      name: user
+      labels:
+        component: user
+        project: roboshop
+        tier: app
+    spec:
+      containers:
+      - name: user
+        image: {{ .Values.deployment.imageURL }}:{{ .Values.deployment.imageVersion }}
+        #command: ["sh", "-c", "echo 'failure' && exit 1"]
+        envFrom:
+        - configMapRef:
+            name: user
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 100m
+            memory: 256Mi
